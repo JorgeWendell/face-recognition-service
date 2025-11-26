@@ -18,6 +18,7 @@ sudo ./deploy.sh
 ```
 
 O script irá:
+
 - ✅ Instalar todas as dependências
 - ✅ Configurar ambiente virtual Python
 - ✅ Instalar dependências Python
@@ -26,7 +27,9 @@ O script irá:
 - ✅ Iniciar o serviço
 
 **Após o deploy automatizado:**
+
 1. Configure o arquivo `.env`:
+
    ```bash
    sudo ./setup-env.sh
    # OU edite manualmente:
@@ -315,6 +318,7 @@ chmod +x quick-deploy.sh
 ```
 
 Ou manualmente:
+
 ```bash
 git pull origin main
 source venv/bin/activate
@@ -325,12 +329,14 @@ pm2 restart face-recognition-service
 ## 📝 Scripts Disponíveis
 
 - **`deploy.sh`** - Deploy completo automatizado (primeira vez)
+
   ```bash
   chmod +x deploy.sh
   sudo ./deploy.sh
   ```
 
 - **`setup-env.sh`** - Configurar arquivo .env interativamente
+
   ```bash
   chmod +x setup-env.sh
   sudo ./setup-env.sh
@@ -356,6 +362,40 @@ Ou se usar Nginx com domínio:
 FACE_RECOGNITION_API_URL=https://api-face-recognition.seudominio.com
 ```
 
+## 🔧 Solução de Problemas
+
+### Serviço não está respondendo na porta 9090
+
+Execute o script de diagnóstico:
+
+```bash
+cd /var/www/face-recognition-service
+chmod +x diagnose.sh fix-pm2.sh
+./diagnose.sh
+```
+
+Se o problema for com o PM2, execute:
+
+```bash
+./fix-pm2.sh
+```
+
+### Verificar logs de erro
+
+```bash
+pm2 logs face-recognition-service --err
+cat /var/www/face-recognition-service/logs/err.log
+```
+
+### Reiniciar serviço manualmente
+
+```bash
+cd /var/www/face-recognition-service
+source venv/bin/activate
+uvicorn app:app --host 0.0.0.0 --port 9090
+# Se funcionar, pressione Ctrl+C e reinicie com PM2
+```
+
 ## 📞 Comandos Úteis
 
 ```bash
@@ -373,4 +413,7 @@ pm2 stop face-recognition-service
 
 # Verificar se está rodando
 curl http://localhost:9090/docs
+
+# Verificar processos na porta
+sudo lsof -i :9090
 ```

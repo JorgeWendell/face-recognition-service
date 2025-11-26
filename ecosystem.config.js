@@ -2,9 +2,10 @@ module.exports = {
   apps: [
     {
       name: 'face-recognition-service',
-      script: 'app.py',
-      interpreter: 'python3',
+      script: 'venv/bin/uvicorn',
+      args: 'app:app --host 0.0.0.0 --port 9090',
       cwd: '/var/www/face-recognition-service',
+      interpreter: 'none',
       env: {
         API_HOST: '0.0.0.0',
         API_PORT: '9090',

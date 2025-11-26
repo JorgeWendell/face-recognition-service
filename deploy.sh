@@ -175,10 +175,12 @@ pm2 delete $SERVICE_NAME 2>/dev/null || true
 
 # Iniciar com PM2
 if [ -f "ecosystem.config.js" ]; then
+    # Atualizar caminho do venv no ecosystem.config.js
+    sed -i "s|venv/bin/uvicorn|$VENV_DIR/bin/uvicorn|g" ecosystem.config.js
     pm2 start ecosystem.config.js
 else
     # Iniciar manualmente se não houver ecosystem.config.js
-    pm2 start $VENV_DIR/bin/uvicorn --name $SERVICE_NAME -- \
+    pm2 start $VENV_DIR/bin/uvicorn --name $SERVICE_NAME --interpreter none -- \
         app:app --host 0.0.0.0 --port 9090
 fi
 
