@@ -26,13 +26,13 @@ cp .env.example .env
 python app_opencv.py
 ```
 
-O serviço estará rodando em: `http://localhost:8000`
+O serviço estará rodando em: `http://localhost:9090`
 
 ### 4. Configurar Next.js
 
 Adicionar no `.env` do projeto Next.js:
 ```env
-FACE_RECOGNITION_API_URL=http://localhost:8000
+FACE_RECOGNITION_API_URL=http://localhost:9090
 ```
 
 ## ✅ Pronto!

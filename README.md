@@ -4,7 +4,20 @@ Serviço Python para reconhecimento facial usando `face_recognition` ou OpenCV.
 
 ## 🚀 Deploy em Produção
 
-Para fazer deploy em um servidor Ubuntu 24.04, consulte o guia completo em [DEPLOY.md](./DEPLOY.md).
+### Deploy Automatizado (Recomendado)
+
+```bash
+# No servidor Ubuntu, execute:
+wget https://raw.githubusercontent.com/seu-usuario/face-recognition-service/main/deploy.sh
+chmod +x deploy.sh
+sudo ./deploy.sh
+```
+
+O script automatiza toda a instalação e configuração!
+
+### Deploy Manual
+
+Para fazer deploy manual ou entender cada passo, consulte o guia completo em [DEPLOY.md](./DEPLOY.md).
 
 ## 📦 Instalação Local
 
@@ -21,6 +34,7 @@ pip install -r requirements.txt
 ```
 
 **Nota:** No Linux, pode ser necessário instalar dependências do sistema:
+
 ```bash
 sudo apt-get install cmake libopenblas-dev liblapack-dev
 ```
@@ -36,16 +50,18 @@ pip install -r requirements-simple.txt
 ## ⚙️ Configuração
 
 1. Copiar arquivo de exemplo:
+
 ```bash
 cp .env.example .env
 ```
 
 2. Editar `.env` com suas credenciais:
+
 - `NEXTCLOUD_WEBDAV_URL`: URL do WebDAV do Nextcloud
 - `NEXTCLOUD_USER`: Usuário do Nextcloud
 - `NEXTCLOUD_PASSWORD`: Senha do Nextcloud
 - `API_HOST`: Host do serviço (padrão: 0.0.0.0)
-- `API_PORT`: Porta do serviço (padrão: 8000)
+- `API_PORT`: Porta do serviço (padrão: 9090)
 - `FACE_MATCH_THRESHOLD`: Threshold de similaridade (padrão: 0.6)
 
 ## ▶️ Executar
@@ -54,10 +70,10 @@ cp .env.example .env
 
 ```bash
 # Versão com face_recognition
-uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+uvicorn app:app --host 0.0.0.0 --port 9090 --reload
 
 # Versão com OpenCV apenas
-uvicorn app_opencv:app --host 0.0.0.0 --port 8000 --reload
+uvicorn app_opencv:app --host 0.0.0.0 --port 9090 --reload
 ```
 
 ### Produção
@@ -71,6 +87,7 @@ Use PM2 ou Systemd conforme descrito em [DEPLOY.md](./DEPLOY.md).
 Reconhece uma face comparando com lista de colaboradores.
 
 **Request:**
+
 ```json
 {
   "image_base64": "data:image/jpeg;base64,...",
@@ -88,6 +105,7 @@ Reconhece uma face comparando com lista de colaboradores.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -105,6 +123,5 @@ Edite o arquivo `.env`:
 - `NEXTCLOUD_USER`: Usuário do Nextcloud
 - `NEXTCLOUD_PASSWORD`: Senha do Nextcloud
 - `FACE_MATCH_THRESHOLD`: Threshold de similaridade (padrão: 0.6)
-- `API_PORT`: Porta do serviço (padrão: 8000)
+- `API_PORT`: Porta do serviço (padrão: 9090)
 - `API_HOST`: Host do serviço (padrão: 0.0.0.0)
-

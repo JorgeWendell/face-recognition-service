@@ -2,7 +2,47 @@
 
 Este guia explica como fazer o deploy do serviço de reconhecimento facial em um servidor Ubuntu 24.04.
 
-## Pré-requisitos
+## 🚀 Deploy Automatizado (Recomendado)
+
+Para um deploy rápido e automatizado, use o script fornecido:
+
+```bash
+# Baixar o script de deploy
+wget https://raw.githubusercontent.com/seu-usuario/face-recognition-service/main/deploy.sh
+# OU se já tiver o repositório clonado:
+cd face-recognition-service
+
+# Tornar executável e executar
+chmod +x deploy.sh
+sudo ./deploy.sh
+```
+
+O script irá:
+- ✅ Instalar todas as dependências
+- ✅ Configurar ambiente virtual Python
+- ✅ Instalar dependências Python
+- ✅ Configurar PM2
+- ✅ Configurar firewall
+- ✅ Iniciar o serviço
+
+**Após o deploy automatizado:**
+1. Configure o arquivo `.env`:
+   ```bash
+   sudo ./setup-env.sh
+   # OU edite manualmente:
+   sudo nano /var/www/face-recognition-service/.env
+   ```
+
+2. Reinicie o serviço:
+   ```bash
+   pm2 restart face-recognition-service
+   ```
+
+## 📋 Deploy Manual
+
+Se preferir fazer manualmente ou entender cada passo:
+
+### Pré-requisitos
 
 - Ubuntu 24.04 LTS
 - Acesso root ou sudo
@@ -33,7 +73,7 @@ sudo mkdir -p /var/www
 cd /var/www
 
 # Clonar o repositório (substitua pela URL do seu repositório)
-sudo git clone https://github.com/seu-usuario/face-recognition-service.git
+sudo git clone https://github.com/JorgeWendell/face-recognition-service.git
 sudo chown -R $USER:$USER /var/www/face-recognition-service
 cd face-recognition-service
 ```
@@ -73,7 +113,7 @@ Configure as variáveis:
 - `NEXTCLOUD_USER`: Usuário do Nextcloud
 - `NEXTCLOUD_PASSWORD`: Senha do Nextcloud
 - `API_HOST`: 0.0.0.0 (para aceitar conexões externas)
-- `API_PORT`: 8000 (ou a porta desejada)
+- `API_PORT`: 9090 (ou a porta desejada)
 - `FACE_MATCH_THRESHOLD`: 0.6 (threshold de similaridade)
 
 ## Passo 5: Testar o Serviço
@@ -83,13 +123,13 @@ Configure as variáveis:
 source venv/bin/activate
 
 # Testar o serviço
-uvicorn app:app --host 0.0.0.0 --port 8000
+uvicorn app:app --host 0.0.0.0 --port 9090
 
 # Ou usando o app_opencv.py (versão sem dlib):
-# uvicorn app_opencv:app --host 0.0.0.0 --port 8000
+# uvicorn app_opencv:app --host 0.0.0.0 --port 9090
 ```
 
-Acesse `http://seu-servidor:8000/docs` para ver a documentação da API.
+Acesse `http://seu-servidor:9090/docs` para ver a documentação da API.
 
 ## Passo 6: Configurar como Serviço (Escolha uma opção)
 
@@ -155,8 +195,8 @@ sudo journalctl -u face-recognition.service -f   # Ver logs
 ## Passo 7: Configurar Firewall
 
 ```bash
-# Permitir porta 8000 (se necessário)
-sudo ufw allow 8000/tcp
+# Permitir porta 9090 (se necessário)
+sudo ufw allow 9090/tcp
 
 # Ou se usar Nginx como proxy reverso, permitir apenas 80/443
 sudo ufw allow 80/tcp
@@ -179,7 +219,7 @@ server {
     server_name api-face-recognition.seudominio.com;
 
     location / {
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:9090;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -253,9 +293,9 @@ pip install -r requirements-simple.txt
 
 ```bash
 # Verificar qual processo está usando a porta
-sudo lsof -i :8000
+sudo lsof -i :9090
 # Ou
-sudo netstat -tulpn | grep 8000
+sudo netstat -tulpn | grep 9090
 ```
 
 ### Problemas de permissão
@@ -264,16 +304,73 @@ sudo netstat -tulpn | grep 8000
 sudo chown -R www-data:www-data /var/www/face-recognition-service
 ```
 
-## Configuração no Next.js
+## 🔄 Atualizações Rápidas
+
+Para atualizar o código após fazer push no GitHub:
+
+```bash
+cd /var/www/face-recognition-service
+chmod +x quick-deploy.sh
+./quick-deploy.sh
+```
+
+Ou manualmente:
+```bash
+git pull origin main
+source venv/bin/activate
+pip install -r requirements.txt
+pm2 restart face-recognition-service
+```
+
+## 📝 Scripts Disponíveis
+
+- **`deploy.sh`** - Deploy completo automatizado (primeira vez)
+  ```bash
+  chmod +x deploy.sh
+  sudo ./deploy.sh
+  ```
+
+- **`setup-env.sh`** - Configurar arquivo .env interativamente
+  ```bash
+  chmod +x setup-env.sh
+  sudo ./setup-env.sh
+  ```
+
+- **`quick-deploy.sh`** - Atualização rápida do código
+  ```bash
+  chmod +x quick-deploy.sh
+  ./quick-deploy.sh
+  ```
+
+## 🔗 Configuração no Next.js
 
 No seu servidor Next.js, atualize a URL do serviço Python no arquivo de configuração:
 
 ```env
-FACE_RECOGNITION_API_URL=http://ip-do-servidor-python:8000
+FACE_RECOGNITION_API_URL=http://ip-do-servidor-python:9090
 ```
 
 Ou se usar Nginx com domínio:
 
 ```env
 FACE_RECOGNITION_API_URL=https://api-face-recognition.seudominio.com
+```
+
+## 📞 Comandos Úteis
+
+```bash
+# Status do serviço
+pm2 status
+
+# Ver logs em tempo real
+pm2 logs face-recognition-service
+
+# Reiniciar serviço
+pm2 restart face-recognition-service
+
+# Parar serviço
+pm2 stop face-recognition-service
+
+# Verificar se está rodando
+curl http://localhost:9090/docs
 ```

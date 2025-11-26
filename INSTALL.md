@@ -70,7 +70,7 @@ NEXTCLOUD_USER=seu_usuario
 NEXTCLOUD_PASSWORD=sua_senha
 
 FACE_MATCH_THRESHOLD=0.6
-API_PORT=8000
+API_PORT=9090
 API_HOST=0.0.0.0
 ```
 
@@ -82,21 +82,21 @@ python app.py
 
 Ou usando uvicorn diretamente:
 ```bash
-uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+uvicorn app:app --host 0.0.0.0 --port 9090 --reload
 ```
 
-O serviço estará disponível em: `http://localhost:8000`
+O serviço estará disponível em: `http://localhost:9090`
 
 ## Passo 4: Configurar Next.js
 
 Adicionar no arquivo `.env` do projeto Next.js:
 ```env
-FACE_RECOGNITION_API_URL=http://localhost:8000
+FACE_RECOGNITION_API_URL=http://localhost:9090
 ```
 
 ## Testar
 
-Acesse `http://localhost:8000` no navegador. Deve retornar:
+Acesse `http://localhost:9090` no navegador. Deve retornar:
 ```json
 {
   "status": "ok",

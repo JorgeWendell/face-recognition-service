@@ -7,7 +7,7 @@ module.exports = {
       cwd: '/var/www/face-recognition-service',
       env: {
         API_HOST: '0.0.0.0',
-        API_PORT: '8000',
+        API_PORT: '9090',
         FACE_MATCH_THRESHOLD: '0.6',
       },
       env_file: '.env',

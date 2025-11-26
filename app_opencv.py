@@ -422,7 +422,7 @@ async def upload_facial(request: UploadFacialRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.getenv("API_PORT", "8000"))
+    port = int(os.getenv("API_PORT", "9090"))
     host = os.getenv("API_HOST", "0.0.0.0")
     uvicorn.run(app, host=host, port=port)
 

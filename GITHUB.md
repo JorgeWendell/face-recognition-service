@@ -53,13 +53,16 @@ git push -u origin main
 - `requirements-simple.txt` - Dependências (sem dlib)
 - `requirements-windows.txt` - Dependências para Windows
 - `README.md` - Documentação principal
-- `DEPLOY.md` - Guia de deploy
+- `DEPLOY.md` - Guia de deploy completo
 - `INSTALL.md` - Guia de instalação
 - `INICIO-RAPIDO.md` - Guia rápido
 - `.env.example` - Exemplo de variáveis de ambiente
 - `.gitignore` - Arquivos ignorados
 - `ecosystem.config.js` - Configuração PM2
 - `face-recognition.service` - Configuração Systemd
+- **`deploy.sh`** - 🚀 Script de deploy automatizado
+- **`setup-env.sh`** - ⚙️ Script para configurar .env interativamente
+- **`quick-deploy.sh`** - 🔄 Script de atualização rápida
 
 ❌ **NÃO serão enviados (devido ao .gitignore):**
 
