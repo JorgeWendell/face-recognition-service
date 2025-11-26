@@ -3,6 +3,7 @@ module.exports = {
     {
       name: 'face-recognition-service',
       script: 'venv/bin/uvicorn',
+      // Tenta usar app.py primeiro, se falhar usa app_opencv.py
       args: 'app:app --host 0.0.0.0 --port 9090',
       cwd: '/var/www/face-recognition-service',
       interpreter: 'none',

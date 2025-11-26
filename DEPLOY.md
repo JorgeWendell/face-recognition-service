@@ -283,13 +283,42 @@ sudo journalctl -u face-recognition.service -f
 
 ## Troubleshooting
 
+### Erro: ModuleNotFoundError: No module named 'face_recognition'
+
+Este erro ocorre quando `face_recognition` não está instalado. Soluções:
+
+**Opção 1: Instalar face_recognition (Recomendado)**
+
+```bash
+cd /var/www/face-recognition-service
+chmod +x install-deps.sh
+./install-deps.sh
+```
+
+**Opção 2: Usar versão OpenCV (Mais fácil)**
+
+```bash
+cd /var/www/face-recognition-service
+# Editar ecosystem.config.js
+nano ecosystem.config.js
+# Mudar a linha args para:
+# args: 'app_opencv:app --host 0.0.0.0 --port 9090'
+
+# Instalar dependências simples
+source venv/bin/activate
+pip install -r requirements-simple.txt
+
+# Reiniciar
+pm2 restart face-recognition-service
+```
+
 ### Erro ao instalar dlib
 
 Se tiver problemas com dlib, use a versão OpenCV:
 
 ```bash
 pip install -r requirements-simple.txt
-# E use app_opencv.py ao invés de app.py
+# E edite ecosystem.config.js para usar app_opencv:app
 ```
 
 ### Porta já em uso
@@ -363,6 +392,54 @@ FACE_RECOGNITION_API_URL=https://api-face-recognition.seudominio.com
 ```
 
 ## 🔧 Solução de Problemas
+
+### Erro: ModuleNotFoundError: No module named 'face_recognition'
+
+Este é o erro mais comum. O `face_recognition` não está instalado.
+
+**Solução rápida:**
+
+```bash
+cd /var/www/face-recognition-service
+chmod +x fix-dependencies.sh
+./fix-dependencies.sh
+pm2 restart face-recognition-service
+```
+
+**Alternativa: Usar versão OpenCV (mais fácil, não requer dlib):**
+
+```bash
+cd /var/www/face-recognition-service
+
+# 1. Editar ecosystem.config.js
+nano ecosystem.config.js
+# Mudar a linha args para:
+# args: 'app_opencv:app --host 0.0.0.0 --port 9090'
+
+# 2. Instalar dependências simples
+source venv/bin/activate
+pip install -r requirements-simple.txt
+
+# 3. Reiniciar
+pm2 restart face-recognition-service
+```
+
+**Se preferir instalar face_recognition (requer compilação do dlib):**
+
+```bash
+# Instalar dependências do sistema
+sudo apt install -y cmake libopenblas-dev liblapack-dev
+
+# Instalar no venv
+cd /var/www/face-recognition-service
+source venv/bin/activate
+pip install cmake
+pip install dlib==19.24.2  # Pode levar 5-10 minutos
+pip install face-recognition==1.3.0
+
+# Reiniciar
+pm2 restart face-recognition-service
+```
 
 ### Serviço não está respondendo na porta 9090
 

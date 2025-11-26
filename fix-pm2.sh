@@ -38,9 +38,31 @@ fi
 # Verificar se uvicorn está instalado
 if [ ! -f "$VENV_DIR/bin/uvicorn" ]; then
     echo -e "${RED}[✗] uvicorn não encontrado no venv${NC}"
-    echo -e "${YELLOW}[*] Instalando dependências...${NC}"
+    echo -e "${YELLOW}[*] Instalando dependências básicas...${NC}"
     source $VENV_DIR/bin/activate
-    pip install -r requirements.txt -q || pip install -r requirements-simple.txt -q
+    pip install --upgrade pip -q
+    pip install fastapi uvicorn[standard] -q
+fi
+
+# Verificar se face_recognition está instalado (se usar app.py)
+if [ -f "app.py" ] && grep -q "import face_recognition" app.py 2>/dev/null; then
+    source $VENV_DIR/bin/activate
+    if ! python -c "import face_recognition" 2>/dev/null; then
+        echo -e "${YELLOW}[*] face_recognition não encontrado. Instalando...${NC}"
+        echo -e "${YELLOW}    Isso pode levar alguns minutos...${NC}"
+        pip install cmake -q || true
+        pip install dlib==19.24.2 || {
+            echo -e "${RED}[✗] Erro ao instalar dlib${NC}"
+            echo -e "${YELLOW}[*] Alternativa: usar app_opencv.py${NC}"
+            echo ""
+            echo "Edite ecosystem.config.js e mude para:"
+            echo "  args: 'app_opencv:app --host 0.0.0.0 --port 9090'"
+            echo ""
+            echo "Ou execute: ./install-deps.sh"
+            exit 1
+        }
+        pip install face-recognition==1.3.0
+    fi
 fi
 
 # Iniciar com PM2

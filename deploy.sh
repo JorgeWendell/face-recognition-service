@@ -73,6 +73,14 @@ apt install -y \
     ufw \
     > /dev/null 2>&1
 
+# Dependências específicas para dlib
+print_step "Instalando dependências para dlib..."
+apt install -y \
+    libx11-dev \
+    libgtk-3-dev \
+    python3-dev \
+    > /dev/null 2>&1
+
 print_success "Dependências instaladas"
 
 # Passo 3: Verificar se o diretório já existe
@@ -116,15 +124,46 @@ pip install --upgrade pip -q
 
 # Passo 5: Instalar dependências Python
 print_step "Instalando dependências Python..."
-if [ -f "requirements.txt" ]; then
-    pip install -r requirements.txt -q
-    print_success "Dependências instaladas (requirements.txt)"
-elif [ -f "requirements-simple.txt" ]; then
-    pip install -r requirements-simple.txt -q
-    print_success "Dependências instaladas (requirements-simple.txt)"
+
+# Verificar qual app será usado
+USE_OPENCV=false
+if [ -f "app_opencv.py" ] && [ ! -f "app.py" ]; then
+    USE_OPENCV=true
+elif [ -f "app.py" ]; then
+    # Verificar se app.py usa face_recognition
+    if grep -q "import face_recognition" app.py 2>/dev/null; then
+        USE_OPENCV=false
+    else
+        USE_OPENCV=true
+    fi
+fi
+
+if [ "$USE_OPENCV" = true ]; then
+    print_step "Usando versão OpenCV (sem dlib)..."
+    if [ -f "requirements-simple.txt" ]; then
+        pip install -r requirements-simple.txt -q
+        print_success "Dependências instaladas (requirements-simple.txt)"
+    else
+        print_error "requirements-simple.txt não encontrado!"
+        exit 1
+    fi
 else
-    print_error "Arquivo requirements.txt não encontrado!"
-    exit 1
+    print_step "Instalando dependências com face_recognition..."
+    if [ -f "requirements.txt" ]; then
+        # Tentar instalar dlib primeiro (pode falhar, mas vamos tentar)
+        print_step "Instalando dlib (isso pode levar alguns minutos)..."
+        pip install dlib==19.24.2 -q 2>&1 | grep -v "WARNING" || {
+            print_step "dlib falhou, tentando instalar face_recognition sem dlib primeiro..."
+            pip install cmake -q || true
+        }
+        
+        # Instalar outras dependências
+        pip install -r requirements.txt -q
+        print_success "Dependências instaladas (requirements.txt)"
+    else
+        print_error "Arquivo requirements.txt não encontrado!"
+        exit 1
+    fi
 fi
 
 # Passo 6: Configurar arquivo .env
