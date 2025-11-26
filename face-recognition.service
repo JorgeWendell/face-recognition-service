@@ -1,0 +1,16 @@
+[Unit]
+Description=Face Recognition Service API
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/face-recognition-service
+Environment="PATH=/var/www/face-recognition-service/venv/bin"
+ExecStart=/var/www/face-recognition-service/venv/bin/uvicorn app:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
