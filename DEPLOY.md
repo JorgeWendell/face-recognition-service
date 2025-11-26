@@ -2,9 +2,40 @@
 
 Este guia explica como fazer o deploy do serviço de reconhecimento facial em um servidor Ubuntu 24.04.
 
-## 🚀 Deploy Automatizado (Recomendado)
+## 🚀 Deploy Completamente Automatizado (RECOMENDADO)
 
-Para um deploy rápido e automatizado, use o script fornecido:
+**Para um deploy 100% automatizado sem nenhuma configuração manual:**
+
+```bash
+# Clonar o repositório
+git clone https://github.com/JorgeWendell/face-recognition-service.git
+cd face-recognition-service
+
+# Tornar executável e executar
+chmod +x deploy_auto.sh
+sudo ./deploy_auto.sh
+```
+
+**O script `deploy_auto.sh` faz TUDO automaticamente:**
+
+- ✅ Atualiza o sistema
+- ✅ Instala todas as dependências do sistema
+- ✅ Instala Node.js e PM2
+- ✅ Clona/atualiza o repositório
+- ✅ Cria ambiente virtual Python
+- ✅ Instala dlib e face_recognition (ou usa OpenCV se falhar)
+- ✅ Instala todas as dependências Python
+- ✅ **Configura o arquivo .env automaticamente** (com suas credenciais)
+- ✅ Configura PM2
+- ✅ Inicia o serviço
+- ✅ Configura firewall
+- ✅ Verifica se está funcionando
+
+**Você não precisa fazer mais nada!** O serviço estará rodando após o script terminar.
+
+## 🚀 Deploy Automatizado (Interativo)
+
+Para um deploy automatizado com configuração interativa do .env:
 
 ```bash
 # Baixar o script de deploy
@@ -357,7 +388,16 @@ pm2 restart face-recognition-service
 
 ## 📝 Scripts Disponíveis
 
-- **`deploy.sh`** - Deploy completo automatizado (primeira vez)
+- **`deploy_auto.sh`** - ⭐ Deploy 100% automatizado (RECOMENDADO)
+
+  Faz tudo automaticamente, incluindo configuração do .env. Não requer nenhuma interação.
+
+  ```bash
+  chmod +x deploy_auto.sh
+  sudo ./deploy_auto.sh
+  ```
+
+- **`deploy.sh`** - Deploy completo automatizado (primeira vez, interativo)
 
   ```bash
   chmod +x deploy.sh
@@ -372,9 +412,23 @@ pm2 restart face-recognition-service
   ```
 
 - **`quick-deploy.sh`** - Atualização rápida do código
+
   ```bash
   chmod +x quick-deploy.sh
   ./quick-deploy.sh
+  ```
+
+- **`fix-dependencies.sh`** - Corrigir dependências faltantes
+
+  ```bash
+  chmod +x fix-dependencies.sh
+  ./fix-dependencies.sh
+  ```
+
+- **`install-dlib.sh`** - Instalar dlib e face_recognition
+  ```bash
+  chmod +x install-dlib.sh
+  ./install-dlib.sh
   ```
 
 ## 🔗 Configuração no Next.js

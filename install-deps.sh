@@ -19,20 +19,31 @@ cd $APP_DIR
 
 if [ ! -d "$VENV_DIR" ]; then
     echo -e "${RED}[✗] Ambiente virtual não encontrado!${NC}"
-    echo "Execute primeiro: python3 -m venv venv"
-    exit 1
+    echo -e "${YELLOW}[*] Criando ambiente virtual...${NC}"
+    python3 -m venv $VENV_DIR
 fi
 
+# Ativar ambiente virtual
+echo -e "${YELLOW}[*] Ativando ambiente virtual...${NC}"
 source $VENV_DIR/bin/activate
 
+# Verificar se pip está do venv
+if ! which pip | grep -q "$VENV_DIR"; then
+    echo -e "${RED}[✗] pip não está usando o ambiente virtual!${NC}"
+    echo -e "${YELLOW}[*] Usando pip do venv diretamente...${NC}"
+    PIP_CMD="$VENV_DIR/bin/pip"
+else
+    PIP_CMD="pip"
+fi
+
 echo -e "${YELLOW}[*] Atualizando pip...${NC}"
-pip install --upgrade pip -q
+$PIP_CMD install --upgrade pip -q
 
 echo -e "${YELLOW}[*] Instalando dependências básicas...${NC}"
-pip install cmake -q || true
+$PIP_CMD install cmake -q || true
 
 echo -e "${YELLOW}[*] Instalando dlib (isso pode levar 5-10 minutos)...${NC}"
-pip install dlib==19.24.2 || {
+$PIP_CMD install dlib==19.24.2 || {
     echo -e "${RED}[✗] Erro ao instalar dlib${NC}"
     echo -e "${YELLOW}[*] Tentando alternativa: usar versão OpenCV${NC}"
     echo ""
@@ -50,10 +61,10 @@ pip install dlib==19.24.2 || {
 }
 
 echo -e "${YELLOW}[*] Instalando face_recognition...${NC}"
-pip install face-recognition==1.3.0
+$PIP_CMD install face-recognition==1.3.0
 
 echo -e "${YELLOW}[*] Instalando outras dependências...${NC}"
-pip install -r requirements.txt -q
+$PIP_CMD install -r requirements.txt -q
 
 echo ""
 echo -e "${GREEN}[✓] Dependências instaladas com sucesso!${NC}"
